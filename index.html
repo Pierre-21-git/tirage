@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{color-scheme:light}html,body{margin:0}[hidden]{display:none!important}</style>
+<title>Deux cadeaux chacun</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 30C40 10 18 12 24 26c3 6 14 6 26 4zM50 30c10-20 32-18 26-4-3 6-14 6-26 4z' fill='none' stroke='%23A82B47' stroke-width='7' stroke-linejoin='round'/%3E%3Crect x='14' y='44' width='72' height='48' rx='4' fill='%231B6A4E'/%3E%3Crect x='8' y='30' width='84' height='18' rx='4' fill='%2325875F'/%3E%3Crect x='44' y='30' width='12' height='62' fill='%23A82B47'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Mono:wght@500&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout concept: une colonne étroite, des étiquettes de cadeau pour montrer les deux destinataires, un code par personne à copier dans un message. */
+:root {
+  --bg: #EDF2F1;
+  --surface: #FFFFFF;
+  --surface-2: #E0E9E7;
+  --ink: #13242B;
+  --ink-2: #485E65;
+  --line: #C6D4D1;
+  --accent: #1B6A4E;
+  --accent-ink: #FFFFFF;
+  --berry: #A82B47;
+  --tag: #E8C56A;
+  --tag-ink: #2A2108;
+  --warn: #7A4F00;
+  --warn-bg: #FBEFD2;
+  --ok: #14573F;
+  --ok-bg: #D9EFE5;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1A1F;
+    --surface: #15262D;
+    --surface-2: #1D3139;
+    --ink: #E7F0EE;
+    --ink-2: #9FB4B8;
+    --line: #2B434B;
+    --accent: #58C29B;
+    --accent-ink: #06241A;
+    --berry: #F08AA0;
+    --tag: #D4A84A;
+    --tag-ink: #1F1805;
+    --warn: #F0C36B;
+    --warn-bg: #33290F;
+    --ok: #8EE0BF;
+    --ok-bg: #16372C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1A1F;
+  --surface: #15262D;
+  --surface-2: #1D3139;
+  --ink: #E7F0EE;
+  --ink-2: #9FB4B8;
+  --line: #2B434B;
+  --accent: #58C29B;
+  --accent-ink: #06241A;
+  --berry: #F08AA0;
+  --tag: #D4A84A;
+  --tag-ink: #1F1805;
+  --warn: #F0C36B;
+  --warn-bg: #33290F;
+  --ok: #8EE0BF;
+  --ok-bg: #16372C;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(2.2rem, 9vw, 3.1rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; }
+p { margin: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.lede { color: var(--ink-2); max-width: 46ch; }
+.head { display: flex; flex-direction: column; gap: 10px; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+.tab {
+  appearance: none; background: none; border: 0; border-bottom: 3px solid transparent;
+  color: var(--ink-2); font: 600 0.98rem var(--font-body); padding: 10px 14px; margin-bottom: -1px;
+  min-height: 44px; cursor: pointer;
+}
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tab:hover { color: var(--ink); }
+
+.panel { display: flex; flex-direction: column; gap: 28px; }
+.block { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.hint { font-size: 0.88rem; color: var(--ink-2); max-width: 60ch; }
+label, .label { font-weight: 600; font-size: 0.95rem; }
+
+textarea, input[type="text"], input[type="url"] {
+  width: 100%; font: 400 16px/1.45 var(--font-body); color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px;
+}
+textarea { resize: vertical; min-height: 5.5rem; }
+textarea.mono { font-family: var(--font-mono); font-size: 15px; letter-spacing: 0.04em; }
+::placeholder { color: var(--ink-2); opacity: 0.75; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.btn {
+  appearance: none; cursor: pointer; font: 600 1rem var(--font-body); min-height: 44px;
+  padding: 0 18px; border-radius: 6px; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--accent-ink);
+}
+.btn:hover { filter: brightness(1.06); }
+.btn.quiet { background: transparent; color: var(--accent); border-color: var(--line); }
+.btn.quiet:hover { border-color: var(--accent); filter: none; }
+.btn.small { min-height: 38px; padding: 0 12px; font-size: 0.9rem; }
+.btn.big { width: 100%; font-size: 1.08rem; min-height: 52px; }
+
+.meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.count { font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.count strong { color: var(--ink); font-weight: 500; }
+.sample-note { font-size: 0.88rem; color: var(--warn); background: var(--warn-bg); padding: 8px 12px; border-radius: 6px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: 0.95rem; }
+.check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+
+.status { padding: 10px 14px; border-radius: 6px; font-size: 0.95rem; }
+.status.ok { background: var(--ok-bg); color: var(--ok); }
+.status.warn { background: var(--warn-bg); color: var(--warn); }
+
+.results { display: flex; flex-direction: column; gap: 18px; border-top: 1px solid var(--line); padding-top: 24px; }
+.rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 10px 12px; }
+.row + .row { border-top: 1px solid var(--line); }
+.row-name { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.fallback { width: 100%; font-family: var(--font-mono); font-size: 13px; min-height: 8rem; }
+
+details { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+summary { cursor: pointer; padding: 12px 14px; font-weight: 600; min-height: 44px; }
+.spoiler-list { margin: 0; padding: 0 14px 14px 14px; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
+.spoiler-list span.to { color: var(--berry); font-weight: 600; }
+
+.reveal { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; }
+.reveal-hello { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; line-height: 1.15; overflow-wrap: anywhere; }
+.tags { display: flex; flex-wrap: wrap; gap: 14px; }
+.tag {
+  position: relative; flex: 1 1 12rem; min-width: 0; background: var(--tag); color: var(--tag-ink);
+  padding: 20px 16px 18px 44px; display: flex; flex-direction: column; gap: 2px;
+  clip-path: polygon(0 22px, 22px 0, 100% 0, 100% 100%, 0 100%);
+}
+.tag::before {
+  content: ""; position: absolute; left: 16px; top: 22px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--surface);
+}
+.tag-label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.tag-name { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; line-height: 1.1; overflow-wrap: anywhere; }
+.reveal-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.reveal-actions .hint { flex: 1 1 14rem; }
+.tag-name { min-height: 1.1em; font-variant-ligatures: none; }
+.tag-name[data-state="pending"] { opacity: 0.5; }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Tirage au sort</p>
+    <h1>Deux cadeaux chacun</h1>
+  </header>
+
+  <div class="tabs" id="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tab-organiser" aria-controls="panel-organiser" aria-selected="true" type="button">Organiser le tirage</button>
+    <button class="tab" role="tab" id="tab-code" aria-controls="panel-code" aria-selected="false" type="button">J'ai un code</button>
+  </div>
+
+  <section class="panel" id="panel-organiser" role="tabpanel" aria-labelledby="tab-organiser">
+    <div class="block">
+      <h2>Participants</h2>
+      <label for="names">Un prénom par ligne</label>
+      <textarea id="names" rows="7" spellcheck="false" autocomplete="off"></textarea>
+      <p class="sample-note" id="sample-note" hidden>Liste d'exemple : remplacez-la par vos prénoms.</p>
+      <div class="meta">
+        <p class="count" id="count" aria-live="polite"></p>
+        <button class="btn quiet small" id="clear-btn" type="button">Vider les champs</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2>Exclusions</h2>
+      <label for="groups">Qui ne doit pas se faire de cadeau ?</label>
+      <textarea id="groups" rows="3" spellcheck="false" autocomplete="off" placeholder="Camille, Julien"></textarea>
+      <p class="hint">Une ligne par groupe, prénoms séparés par des virgules. Dans un même groupe, personne ne tire personne : utile pour un couple ou une fratrie.</p>
+      <label class="check" for="nomutual">
+        <input type="checkbox" id="nomutual" checked>
+        <span>Éviter les échanges à deux : si A offre à B, B n'offre pas à A (impossible à moins de 5 personnes, le tirage le dira).</span>
+      </label>
+    </div>
+
+    <div class="block">
+      <button class="btn big" id="draw" type="button">Tirer au sort</button>
+      <p class="status" id="status" role="status" hidden></p>
+    </div>
+
+    <div class="results" id="results" hidden>
+      <div class="block">
+        <h2>Un lien par personne</h2>
+        <p class="hint">Envoyez à chacun son message. Le lien ouvre une page personnelle : la personne appuie sur « Tirer mes deux noms » et découvre ses deux destinataires, les mêmes à chaque ouverture. Vous ne voyez rien, vous pouvez donc participer aussi : ouvrez votre propre lien comme les autres.</p>
+      </div>
+      <div class="block">
+        <label for="link">Lien de cette page</label>
+        <input type="url" id="link" placeholder="https://votre-pseudo.github.io/tirage/" autocomplete="off" spellcheck="false">
+        <p class="hint">C'est l'adresse de cette page. Le code de chaque personne est ajouté à la fin pour former son lien personnel.</p>
+      </div>
+      <ul class="rows" id="rows"></ul>
+      <details id="spoiler">
+        <summary>Afficher le tirage complet</summary>
+        <ul class="spoiler-list" id="spoiler-list"></ul>
+      </details>
+      <p class="hint">Les codes sont brouillés, pas chiffrés : ils empêchent de lire le tirage par hasard, pas d'un décodage déterminé.</p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-code" role="tabpanel" aria-labelledby="tab-code" hidden>
+    <div class="block">
+      <h2>Mes deux destinataires</h2>
+      <label for="code">Collez votre code, ou tout le message reçu</label>
+      <textarea id="code" class="mono" rows="4" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="K7F2-9XQM-…"></textarea>
+      <button class="btn" id="reveal-btn" type="button">Voir mes destinataires</button>
+      <p class="status warn" id="code-error" role="alert" hidden></p>
+    </div>
+    <div class="reveal" id="reveal" hidden>
+      <p class="reveal-hello" id="reveal-hello"></p>
+      <div class="tags" id="reveal-tags"></div>
+      <div class="reveal-actions">
+        <button class="btn quiet" id="hide-btn" type="button">Cacher le résultat</button>
+        <p class="hint">Gardez le secret. Chacun de vos deux cadeaux part à une personne différente.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-me" aria-label="Mon tirage" hidden>
+    <div class="reveal">
+      <p class="reveal-hello" id="me-hello"></p>
+      <p class="hint">Appuie sur le bouton pour voir à qui tu offres des cadeaux.</p>
+      <div class="tags" id="me-tags" aria-live="polite"></div>
+      <div class="reveal-actions">
+        <button class="btn" id="me-btn" type="button">Tirer mes deux noms</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // CORE-START
+  var ALPHA = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+  var KEY = new TextEncoder().encode("noel-deux-cadeaux");
+
+  function rnd(n) {
+    var c = (typeof crypto !== "undefined" && crypto.getRandomValues) ? crypto : null;
+    if (!c) return Math.floor(Math.random() * n);
+    var a = new Uint32Array(1), lim = Math.floor(4294967296 / n) * n;
+    do { c.getRandomValues(a); } while (a[0] >= lim);
+    return a[0] % n;
+  }
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = rnd(i + 1), t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function parseNames(text) {
+    var names = [], seen = {}, dups = [];
+    String(text).split(/\r?\n|;/).forEach(function (line) {
+      var nm = line.replace(/,/g, " ").replace(/\s+/g, " ").trim();
+      if (!nm) return;
+      var k = nm.toLowerCase();
+      if (Object.prototype.hasOwnProperty.call(seen, k)) {
+        if (dups.indexOf(nm) < 0) dups.push(nm);
+        return;
+      }
+      seen[k] = names.length;
+      names.push(nm);
+    });
+    return { names: names, dups: dups };
+  }
+
+  function buildAllowed(names, groupsText) {
+    var n = names.length, idx = {}, unknown = [];
+    names.forEach(function (x, i) { idx[x.toLowerCase()] = i; });
+    var allowed = [];
+    for (var i = 0; i < n; i++) {
+      var row = [];
+      for (var j = 0; j < n; j++) row.push(i !== j);
+      allowed.push(row);
+    }
+    String(groupsText).split(/\r?\n/).forEach(function (line) {
+      var ids = [];
+      line.split(",").forEach(function (part) {
+        var nm = part.replace(/\s+/g, " ").trim();
+        if (!nm) return;
+        var k = nm.toLowerCase();
+        if (Object.prototype.hasOwnProperty.call(idx, k)) ids.push(idx[k]);
+        else if (unknown.indexOf(nm) < 0) unknown.push(nm);
+      });
+      ids.forEach(function (a) { ids.forEach(function (b) { if (a !== b) allowed[a][b] = false; }); });
+    });
+    return { allowed: allowed, unknown: unknown };
+  }
+
+  function attemptSolve(n, allowed, noMutual, budget) {
+    var order = [], out = [], cap = [], nodes = 0, i;
+    for (i = 0; i < n; i++) { order.push(i); out.push([]); cap.push(2); }
+    shuffle(order);
+    function ok(g, r) {
+      return allowed[g][r] && cap[r] > 0 && !(noMutual && out[r].indexOf(g) >= 0);
+    }
+    function feasible(pos) {
+      for (var j = 0; j < n; j++) {
+        if (cap[j] === 0) continue;
+        var c = 0;
+        for (var k = pos; k < n; k++) {
+          var g = order[k];
+          if (g !== j && allowed[g][j] && !(noMutual && out[j].indexOf(g) >= 0)) c++;
+        }
+        if (c < cap[j]) return false;
+      }
+      return true;
+    }
+    function rec(pos) {
+      if (pos === n) return true;
+      if (++nodes > budget) return false;
+      var g = order[pos], list = [];
+      for (var r = 0; r < n; r++) if (ok(g, r)) list.push(r);
+      shuffle(list);
+      for (var x = 0; x < list.length; x++) {
+        for (var y = x + 1; y < list.length; y++) {
+          var a = list[x], b = list[y];
+          out[g] = [a, b]; cap[a]--; cap[b]--;
+          if (feasible(pos + 1) && rec(pos + 1)) return true;
+          cap[a]++; cap[b]++; out[g] = [];
+          if (nodes > budget) return false;
+        }
+      }
+      return false;
+    }
+    return rec(0) ? out.map(function (o) { return o.slice(); }) : null;
+  }
+
+  function solve(n, allowed, noMutual) {
+    for (var attempt = 0; attempt < 80; attempt++) {
+      var res = attemptSolve(n, allowed, noMutual, 40000);
+      if (res) return res;
+    }
+    return null;
+  }
+
+  function validate(out, allowed, noMutual) {
+    var n = out.length, indeg = [], i;
+    for (i = 0; i < n; i++) indeg.push(0);
+    for (i = 0; i < n; i++) {
+      var o = out[i];
+      if (!o || o.length !== 2 || o[0] === o[1]) return false;
+      for (var k = 0; k < 2; k++) {
+        var j = o[k];
+        if (j === i || !allowed[i][j]) return false;
+        if (noMutual && out[j] && out[j].indexOf(i) >= 0) return false;
+        indeg[j]++;
+      }
+    }
+    return indeg.every(function (d) { return d === 2; });
+  }
+
+  function toB32(bytes) {
+    var bits = 0, val = 0, s = "";
+    bytes.forEach(function (b) {
+      val = (val << 8) | b; bits += 8;
+      while (bits >= 5) { s += ALPHA[(val >>> (bits - 5)) & 31]; bits -= 5; }
+      val &= (1 << bits) - 1;
+    });
+    if (bits > 0) s += ALPHA[(val << (5 - bits)) & 31];
+    return s;
+  }
+  function fromB32(s) {
+    var bits = 0, val = 0, out = [];
+    for (var i = 0; i < s.length; i++) {
+      var v = ALPHA.indexOf(s[i]);
+      if (v < 0) return null;
+      val = (val << 5) | v; bits += 5;
+      if (bits >= 8) { out.push((val >>> (bits - 8)) & 255); bits -= 8; val &= (1 << bits) - 1; }
+    }
+    return out;
+  }
+
+  function encodeCode(name, a, b) {
+    var data = new TextEncoder().encode(JSON.stringify([name, a, b]));
+    var salt = rnd(256), sum = 0, bytes = [salt];
+    for (var i = 0; i < data.length; i++) {
+      sum = (sum + data[i]) & 255;
+      bytes.push(data[i] ^ KEY[(i + salt) % KEY.length] ^ salt);
+    }
+    bytes.push(sum);
+    return toB32(bytes).match(/.{1,4}/g).join("-");
+  }
+
+  function decodeOne(s) {
+    s = s.replace(/[^0-9A-Z]/g, "").replace(/O/g, "0").replace(/[IL]/g, "1").replace(/U/g, "V");
+    var bytes = fromB32(s);
+    if (!bytes || bytes.length < 4) return null;
+    var salt = bytes[0], sum = bytes[bytes.length - 1], body = bytes.slice(1, -1);
+    var data = new Uint8Array(body.length), chk = 0;
+    for (var i = 0; i < body.length; i++) {
+      var d = body[i] ^ KEY[(i + salt) % KEY.length] ^ salt;
+      data[i] = d; chk = (chk + d) & 255;
+    }
+    if (chk !== sum) return null;
+    try {
+      var arr = JSON.parse(new TextDecoder().decode(data));
+      if (Array.isArray(arr) && arr.length === 3 && arr.every(function (x) { return typeof x === "string"; })) {
+        return { name: arr[0], to: [arr[1], arr[2]] };
+      }
+    } catch (e) { /* code invalide */ }
+    return null;
+  }
+
+  function decodeCode(raw) {
+    var t = String(raw).toUpperCase();
+    var found = t.match(/(?:[0-9A-Z]{4}-){3,}[0-9A-Z]{1,4}/g) || [];
+    for (var i = 0; i < found.length; i++) {
+      var r = decodeOne(found[i]);
+      if (r) return r;
+    }
+    return decodeOne(t);
+  }
+  // CORE-END
+
+  /* ---------- Interface ---------- */
+  var $ = function (id) { return document.getElementById(id); };
+  var SAMPLE_NAMES = "Camille\nJulien\nOdile\nHugo\nInès\nThéo";
+  var SAMPLE_GROUPS = "Camille, Julien";
+  var STORE = "deux-cadeaux-v1";
+  var DEFAULT_LINK = location.href.split("#")[0];
+
+  var namesEl = $("names"), groupsEl = $("groups"), noMutualEl = $("nomutual"), linkEl = $("link");
+  var countEl = $("count"), sampleNote = $("sample-note"), statusEl = $("status");
+  var resultsEl = $("results"), rowsEl = $("rows"), spoilerEl = $("spoiler"), spoilerList = $("spoiler-list");
+  var codes = [];
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORE);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* stockage indisponible */ }
+    return null;
+  }
+  function save() {
+    try {
+      localStorage.setItem(STORE, JSON.stringify({
+        names: namesEl.value, groups: groupsEl.value, link: linkEl.value,
+        noMutual: noMutualEl.checked, codes: codes
+      }));
+    } catch (e) { /* stockage indisponible */ }
+  }
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status " + kind;
+    statusEl.hidden = false;
+  }
+
+  function refreshCount() {
+    var p = parseNames(namesEl.value), n = p.names.length;
+    countEl.textContent = "";
+    var s = document.createElement("strong");
+    s.textContent = n + (n > 1 ? " personnes" : " personne");
+    countEl.appendChild(s);
+    countEl.appendChild(document.createTextNode(" · " + (2 * n) + " cadeaux au total"));
+    sampleNote.hidden = !(namesEl.value === SAMPLE_NAMES && groupsEl.value === SAMPLE_GROUPS);
+  }
+
+  function buildMessage(name, code) {
+    var base = linkEl.value.trim().replace(/#.*$/, "");
+    var m = "Salut " + name + " ! Voici ton tirage au sort : tu offres 2 cadeaux.\n\n";
+    if (base) {
+      m += "Ouvre ton lien personnel, appuie sur « Tirer mes deux noms » et découvre à qui les offrir :\n" + base + "#" + code;
+    } else {
+      m += "Voici ton code :\n" + code + "\n\nOuvre la page du tirage, va dans « J'ai un code », colle le code et appuie sur « Voir mes destinataires ».";
+    }
+    m += "\n\nChut, c'est secret !";
+    return m;
+  }
+
+  function renderResults() {
+    rowsEl.textContent = "";
+    resultsEl.hidden = codes.length === 0;
+    codes.forEach(function (c, i) {
+      var li = document.createElement("li");
+      li.className = "row";
+      var nm = document.createElement("span");
+      nm.className = "row-name";
+      nm.textContent = c.name;
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn quiet small";
+      btn.textContent = "Copier le message";
+      var fb = document.createElement("textarea");
+      fb.className = "fallback";
+      fb.readOnly = true;
+      fb.hidden = true;
+      fb.setAttribute("aria-label", "Message pour " + c.name);
+      btn.addEventListener("click", function () {
+        var text = buildMessage(c.name, c.code);
+        var p;
+        try { p = navigator.clipboard.writeText(text); } catch (e) { p = Promise.reject(e); }
+        p.then(function () {
+          fb.hidden = true;
+          btn.textContent = "Copié";
+          setTimeout(function () { btn.textContent = "Copier le message"; }, 1800);
+        }, function () {
+          fb.value = text; fb.hidden = false; fb.focus(); fb.select();
+          btn.textContent = "Copiez le texte ci-dessous";
+        });
+      });
+      li.appendChild(nm); li.appendChild(btn); li.appendChild(fb);
+      rowsEl.appendChild(li);
+    });
+    spoilerEl.open = false;
+    spoilerList.textContent = "";
+  }
+
+  spoilerEl.addEventListener("toggle", function () {
+    spoilerList.textContent = "";
+    if (!spoilerEl.open) return;
+    codes.forEach(function (c) {
+      var d = decodeOne(c.code.replace(/-/g, ""));
+      if (!d) return;
+      var li = document.createElement("li");
+      li.appendChild(document.createTextNode(d.name + " offre à "));
+      var to = document.createElement("span");
+      to.className = "to";
+      to.textContent = d.to[0] + " et " + d.to[1];
+      li.appendChild(to);
+      spoilerList.appendChild(li);
+    });
+  });
+
+  function doDraw() {
+    var p = parseNames(namesEl.value), names = p.names, n = names.length;
+    if (n < 3) { setStatus("Il faut au moins 3 personnes pour que chacun offre à deux autres.", "warn"); return; }
+    if (p.dups.length) { setStatus("Prénoms en double : " + p.dups.join(", ") + ". Ajoutez une initiale pour les distinguer.", "warn"); return; }
+    var ba = buildAllowed(names, groupsEl.value);
+    if (ba.unknown.length) { setStatus("Nom absent de la liste dans les exclusions : " + ba.unknown.join(", ") + ".", "warn"); return; }
+
+    var out = null, strict = false;
+    if (noMutualEl.checked) {
+      out = solve(n, ba.allowed, true);
+      strict = !!out;
+    }
+    if (!out) out = solve(n, ba.allowed, false);
+    if (!out || !validate(out, ba.allowed, strict)) {
+      setStatus("Tirage impossible avec ces exclusions. Retirez un groupe d'exclusion ou ajoutez des participants.", "warn");
+      return;
+    }
+    codes = names.map(function (nm, i) {
+      return { name: nm, code: encodeCode(nm, names[out[i][0]], names[out[i][1]]) };
+    });
+    save();
+    renderResults();
+    var msg = "Tirage fait : " + n + " personnes, " + (2 * n) + " cadeaux. Chacun en offre 2 et en reçoit 2.";
+    if (noMutualEl.checked && !strict) msg += " Avec ces participants, des échanges à deux sont inévitables.";
+    setStatus(msg, "ok");
+    resultsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  /* Onglets */
+  var tabs = { organiser: $("tab-organiser"), code: $("tab-code") };
+  var panels = { organiser: $("panel-organiser"), code: $("panel-code") };
+  function showTab(name, setHash) {
+    Object.keys(tabs).forEach(function (k) {
+      var on = k === name;
+      tabs[k].setAttribute("aria-selected", on ? "true" : "false");
+      panels[k].hidden = !on;
+    });
+    if (setHash) { try { location.hash = name; } catch (e) { /* hash indisponible */ } }
+  }
+  tabs.organiser.addEventListener("click", function () { showTab("organiser", true); });
+  tabs.code.addEventListener("click", function () { showTab("code", true); });
+  /* Page personnelle : le lien contient le code de la personne */
+  var tabsEl = $("tabs"), panelMe = $("panel-me"), meBtn = $("me-btn"), meBox = $("me-tags");
+  var personal = null, meDrawn = false, anim = [];
+  var LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  function stopAnim() {
+    anim.forEach(function (id) { clearInterval(id); });
+    anim = [];
+  }
+  function makeTag(text, pending) {
+    var t = document.createElement("div");
+    t.className = "tag";
+    var l = document.createElement("span");
+    l.className = "tag-label";
+    l.textContent = "Pour";
+    var nm = document.createElement("span");
+    nm.className = "tag-name";
+    nm.textContent = text;
+    if (pending) nm.setAttribute("data-state", "pending");
+    t.appendChild(l); t.appendChild(nm);
+    return t;
+  }
+  function resetMe() {
+    stopAnim();
+    meBox.textContent = "";
+    meBox.setAttribute("aria-busy", "false");
+    meBox.appendChild(makeTag("?", true));
+    meBox.appendChild(makeTag("?", true));
+    meBtn.textContent = "Tirer mes deux noms";
+    meBtn.disabled = false;
+    meBtn.hidden = false;
+    meDrawn = false;
+  }
+  function scramble(el, target, done) {
+    var steps = 24, step = 0, L = target.length;
+    el.removeAttribute("data-state");
+    var id = setInterval(function () {
+      step++;
+      var fixed = Math.floor(L * step / steps), s = target.slice(0, fixed);
+      for (var k = fixed; k < L; k++) s += target.charAt(k) === " " ? " " : LETTERS.charAt(rnd(26));
+      el.textContent = s;
+      if (step >= steps) { clearInterval(id); el.textContent = target; done(); }
+    }, 55);
+    anim.push(id);
+  }
+  meBtn.addEventListener("click", function () {
+    if (!personal) return;
+    if (meDrawn) return;
+    meDrawn = true;
+    var spans = meBox.querySelectorAll(".tag-name");
+    function finish() {
+      meBox.setAttribute("aria-busy", "false");
+      meBtn.hidden = true;
+    }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      for (var i = 0; i < 2; i++) { spans[i].removeAttribute("data-state"); spans[i].textContent = personal.to[i]; }
+      finish();
+      return;
+    }
+    meBox.setAttribute("aria-busy", "true");
+    meBtn.disabled = true;
+    meBtn.textContent = "Tirage en cours…";
+    scramble(spans[0], personal.to[0], function () { scramble(spans[1], personal.to[1], finish); });
+  });
+
+  function enterPersonal(r) {
+    personal = r;
+    tabsEl.hidden = true;
+    panels.organiser.hidden = true;
+    panels.code.hidden = true;
+    panelMe.hidden = false;
+    $("me-hello").textContent = "Bonjour " + r.name + " !";
+    resetMe();
+  }
+  function leavePersonal() {
+    if (panelMe.hidden) return;
+    stopAnim();
+    personal = null;
+    panelMe.hidden = true;
+    tabsEl.hidden = false;
+    showTab("organiser", false);
+  }
+  function routeFromHash() {
+    var h = (location.hash || "").replace("#", "");
+    if (h === "code" || h === "organiser") { leavePersonal(); showTab(h, false); return; }
+    if (h) {
+      var r = decodeCode(h);
+      if (r) { enterPersonal(r); return; }
+    }
+    leavePersonal();
+  }
+  window.addEventListener("hashchange", routeFromHash);
+
+  /* Décodage */
+  var codeEl = $("code"), codeErr = $("code-error"), revealEl = $("reveal");
+  $("reveal-btn").addEventListener("click", function () {
+    var r = decodeCode(codeEl.value);
+    if (!r) {
+      revealEl.hidden = true;
+      codeErr.textContent = "Code non reconnu. Collez-le tel que reçu, avec ses tirets, sans rien enlever.";
+      codeErr.hidden = false;
+      return;
+    }
+    codeErr.hidden = true;
+    $("reveal-hello").textContent = "Bonjour " + r.name + ", tes deux cadeaux vont à :";
+    var box = $("reveal-tags");
+    box.textContent = "";
+    r.to.forEach(function (who) {
+      var t = document.createElement("div");
+      t.className = "tag";
+      var l = document.createElement("span");
+      l.className = "tag-label";
+      l.textContent = "Pour";
+      var nm = document.createElement("span");
+      nm.className = "tag-name";
+      nm.textContent = who;
+      t.appendChild(l); t.appendChild(nm);
+      box.appendChild(t);
+    });
+    revealEl.hidden = false;
+  });
+  $("hide-btn").addEventListener("click", function () {
+    codeEl.value = "";
+    revealEl.hidden = true;
+    codeErr.hidden = true;
+    $("reveal-tags").textContent = "";
+  });
+
+  /* Initialisation */
+  var saved = load();
+  namesEl.value = saved && typeof saved.names === "string" ? saved.names : SAMPLE_NAMES;
+  groupsEl.value = saved && typeof saved.groups === "string" ? saved.groups : SAMPLE_GROUPS;
+  linkEl.value = saved && typeof saved.link === "string" && saved.link ? saved.link : DEFAULT_LINK;
+  noMutualEl.checked = saved && typeof saved.noMutual === "boolean" ? saved.noMutual : true;
+  if (saved && Array.isArray(saved.codes)) {
+    codes = saved.codes.filter(function (c) { return c && typeof c.name === "string" && typeof c.code === "string"; });
+  }
+  refreshCount();
+  renderResults();
+  routeFromHash();
+
+  [namesEl, groupsEl].forEach(function (el) { el.addEventListener("input", function () { refreshCount(); save(); }); });
+  noMutualEl.addEventListener("change", save);
+  linkEl.addEventListener("input", save);
+  $("draw").addEventListener("click", doDraw);
+  $("clear-btn").addEventListener("click", function () {
+    namesEl.value = ""; groupsEl.value = ""; codes = [];
+    statusEl.hidden = true;
+    renderResults(); refreshCount(); save();
+    namesEl.focus();
+  });
+})();
+</script>
+</body>
+</html>
